@@ -10,7 +10,7 @@ const zonesurls = [
     "https://cdn.jsdelivr.net/gh/gn-math/assets@master/zones.json",
     "https://cdn.jsdelivr.net/gh/gn-math/assets/zones.json"
 ];
-const zonesURL = zonesurls[Math.floor(Math.random() * zonesurls.length)];
+let zonesURL = zonesurls[Math.floor(Math.random() * zonesurls.length)];
 const coverURL = "https://cdn.jsdelivr.net/gh/gn-math/covers@main";
 const htmlURL = "https://cdn.jsdelivr.net/gh/gn-math/html@main";
 let zones = [];
@@ -18,6 +18,19 @@ let popularityData = {};
 const featuredContainer = document.getElementById('featuredZones');
 async function listZones() {
     try {
+      let sharesponse;
+        try {
+          sharesponse = await fetch("https://api.github.com/repos/gn-math/assets/commits?t="+Date.now());
+        } catch (error) {}
+        if (sharesponse && sharesponse.status === 200) {
+          try {
+            const shajson = await sharesponse.json();
+            const sha = shajson[0]['sha'];
+            if (sha) {
+                zonesURL = `https://cdn.jsdelivr.net/gh/gn-math/assets@${sha}/zones.json`;
+            }
+          } catch (error) {}
+        }
         const response = await fetch(zonesURL+"?t="+Date.now());
         const json = await response.json();
         zones = json;
